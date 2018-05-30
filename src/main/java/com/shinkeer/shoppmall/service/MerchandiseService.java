@@ -1,56 +1,30 @@
 package com.shinkeer.shoppmall.service;
 
-import com.shinkeer.shoppmall.dao.MerchandiseDao;
+import com.shinkeer.shoppmall.base.service.ServiceImpl;
+import com.shinkeer.shoppmall.common.exception.SerException;
+import com.shinkeer.shoppmall.dto.MerchandiseDTO;
 import com.shinkeer.shoppmall.entity.Merchandise;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.shinkeer.shoppmall.to.MerchandiseTO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+
 @Service
-public class MerchandiseService {
-    @Autowired
-    MerchandiseDao merchandiseDao;
+public class MerchandiseService extends ServiceImpl<Merchandise,MerchandiseDTO>{
 
-    public List<Merchandise> merchandiseList(){
-        return merchandiseDao.findAll();
-    }
-
-    public Merchandise findById(String id){
-        return merchandiseDao.findById(id).get();
+    public void saveMerchandise(MerchandiseTO merchandiseTO) throws SerException{
+        Merchandise merchandise = new Merchandise();
+        BeanUtils.copyProperties(merchandiseTO,merchandise);
+        merchandise.setCreateDate(LocalDateTime.now());
+        super.save(merchandise);
     }
 
-    public String saveMerchandise(Merchandise merchandise){
-        String msg = "";
-        try {
-            merchandiseDao.save(merchandise);
-            msg = "保存成功";
-        }catch (Exception e){
-            e.printStackTrace();
-            msg = "保存失败";
-        }
-        return msg;
+    public void updateMerchandise(MerchandiseTO merchandiseTO) throws SerException{
+        Merchandise merchandise = super.findById(merchandiseTO.getId());
+        BeanUtils.copyProperties(merchandiseTO,merchandise);
+        super.update(merchandise);
     }
 
-    public String updateMerchandise(Merchandise merchandise){
-        String msg = "";
-        try {
-            merchandiseDao.saveAndFlush(merchandise);
-            msg = "编辑成功";
-        }catch (Exception e){
-            e.printStackTrace();
-            msg = "编辑失败";
-        }
-        return msg;
-    }
-    public String deleteMerchandise(String id){
-        String msg = "";
-        try {
-            merchandiseDao.deleteById(id);
-            msg = "删除成功";
-        }catch (Exception e){
-            e.printStackTrace();
-            msg = "删除失败";
-        }
-        return msg;
-    }
 }

@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfig
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = "com.shinkeer.shoppmall.dao")//扫描jap的接口
 @EnableTransactionManagement(proxyTargetClass = true)//开启事务
 @EnableAutoConfiguration(exclude = {JpaRepositoriesAutoConfiguration.class})//开启自动配置，//禁止springboot自动加载持久化bean
-@EntityScan(basePackages = "com.shinkeer.shoppmall.entity")//扫描entity类
+@EntityScan(basePackages = "com.shinkeer.shoppmall.entity",basePackageClasses = Jsr310JpaConverters.class)//扫描entity类，Jsr310JpaConverters：对日期的转换处理
 
 public class ShoppmallApplication {
 

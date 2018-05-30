@@ -1,0 +1,109 @@
+.edit_sty{
+    background-color: #f3f3f3;
+    margin:0 auto;
+    border:1px solid #000;
+    width:70%;
+    height:1100px;
+}
+.form-group i{
+    color: red;
+}
+.subbtn{
+    float: right;
+    margin-right: 80px;
+    margin-top: 40px;
+}
+.myText-content{
+    float: right;
+}
+.my-container{
+    float: left;
+    margin-left: 10px;
+}
+.upload-img,.img-span{
+    position:relative;
+    float: left;
+    width: 150px;
+    height: 150px
+}
+.upload-file{
+    margin-top: 120px;
+    width: 70px;
+    float: left;
+    margin-left: 12px;
+}
+.upload-btn{
+    margin-top: 115px;
+    margin-left: 12px;
+    float: left;
+}
+.upload-detailPic{
+    margin-top: 5px;
+    width: 70px;
+    float: left;
+}
+.col-sm-10 input[type='text']{
+    width: 300px;
+}
+.edit_sty form{
+    margin-top: 20px;
+}
+.deta-pics{
+    margin-left: 177px;
+    width: 460px;
+    margin-top: 10px;
+    display: inline-block;
+    position: relative;
+}
+
+.delete-div{
+    position: absolute;
+    top: 0px;
+    width: 150px;
+    height: 20px;
+    background-color: rgba(0,0,0,0.2);
+    display: none;
+}
+.deta-pics .delete {
+    position: absolute;
+    right: 0px;
+    width: 20px;
+    height: 20px;
+}
+.msg-span{
+    color: red;
+    margin-left: 12px;
+    display: none;
+}
+.expand-sty{
+    margin-top: 121px;
+    float: left;
+}
+#operat1{
+    width:30px;
+    height: 30px;
+    margin-right: 5px;
+    /*border-style: solid;*/
+}
+
+#operat2{
+    width:30px;
+    height: 30px;
+    margin-left: 5px;
+    /*border-style: solid;*/
+}
+#operat3{
+    width:30px;
+    height: 30px;
+    margin-left: 10px;
+}
+#operat3 img{
+    width:20px;
+    height: 20px;
+}
+.detailDiv{
+    margin: 40px 10px 20px 150px;
+}
+.detailLable{
+    width: 90px;
+}

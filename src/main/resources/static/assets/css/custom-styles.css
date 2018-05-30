@@ -22,7 +22,11 @@ body {
     padding: 15px 30px;
     min-height:1200px;
 }
-.header .container-fluid{
+.header{
+    padding:0;
+    whith:100%;
+}
+.container-fluid{
 padding:0;
 }
 .text-center {
@@ -470,8 +474,13 @@ padding-top: 4px;
 .nav-third-level li a {
     padding-left: 55px;
 }
-.sidebar-collapse , .sidebar-collapse .nav{
+.sidebar-collapse{
 	background:none;
+    height: 550px;
+    overflow: auto;
+}
+.sidebar-collapse .nav{
+    background:none;
 }
 .sidebar-collapse .nav {
 	padding:0;
@@ -619,5 +628,8 @@ font-size: 19px;
   margin: 14px;
 }
 }
-
-
+.tabs-close img{
+    margin-left: 8px;
+    width: 8px;
+    height: 8px;
+}

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品管理</title>
+    <link rel="stylesheet" href="../static/assets/css/bootstrap-table.css">
+    <link rel="stylesheet" href="../static/assets/css/custom.css">
+    <link rel="stylesheet" href="../static/assets/css/bootstrapValidator.min.css">
+    <script src="../static/assets/js/bootstrap-table.js"></script>
+    <script src="../static/assets/js/bootstrapValidator.min.js"></script>
+    <script src="../static/assets/js/bootstrap-table-zh-CN.js"></script>
+</head>
+<body>
+<button type="button" data-toggle="modal" class="btn btn-warning" onclick="addMerch(this)"><img
+        src="../static/assets/img/edit_add.png">&nbsp;&nbsp;新增产品
+</button>
+<button type="button" class="btn btn-warning" onclick="delMerch()"><img src="../static/assets/img/cancel.png">&nbsp;&nbsp;批量删除
+</button>
+<!--表格列表-->
+<table id="merchTable"></table>
+<!--功能工具栏-->
+<div id="merchTool">
+        <div class="my-container">
+            <label class="myLabel-content">产品名称：</label>
+            <span class="myText-content">
+            <input  type="text" class="form-control" name="merchName" placeholder="输入产品名称">
+        </span>
+        </div>
+        <div class="my-container">
+            <button id="merchSearch" type="button" class="btn btn-warning"><img src="../static/assets/img/search.png">&nbsp;&nbsp;搜索</button>
+        </div>
+</div>
+
+<!--新增编辑产品的模式窗口-->
+<div class="modal fade" id="merchModal" aria-hidden="true">
+    <div class="edit_sty">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+            </button>
+            <h4 class="modal-title" id="merchModalLabel">
+            </h4>
+        </div>
+        <form role="form" class="form-horizontal" id="merchForm">
+            <div class="form-group hidden">
+                <label for="mid" class="col-sm-2 control-label">id</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="mid" name="id">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="detailName" class="col-sm-2 control-label">商品名称<i>*</i></label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="detailName" name="detailName" placeholder="请输入商品名称">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pic" class="col-sm-2 control-label">商品图片<i>*</i></label>
+                <div class="col-sm-10 pics">
+                    <img class="upload-img" id="picimg" src="../static/assets/img/59858PICThv_1024.png">
+                    <input type="file" id="pic" class="upload-file hidden">
+                    <button type="button" class="btn btn-primary upload-btn"  id="upload-pic" onclick="document.getElementById('pic').click();">上传图片</button>
+                    <span class="msg-span expand-sty">上传成功...</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="detailPic" class="col-sm-2 control-label">详情图片</label>
+                <div class="col-sm-10 detailpics">
+                    <input type="text" class="hidden" id="deleteImgContent">
+                    <input type="file" id="detailPic" class="upload-detailPic hidden" multiple="multiple"  >
+                    <button type="button" class="btn btn-primary"  id="upload-detpic" onclick="document.getElementById('detailPic').click();">上传图片</button>
+                    <span class="msg-span" style=" margin-top: 7px;">上传成功...</span>
+                </div>
+                <div class="deta-pics">
+                </div>
+            </div>
+            <span class="subbtn">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" id="merchSub">提交</button>
+            </span>
+        </form>
+    </div>
+</div>
+
+<!--详情模态框-->
+<div class="modal fade" id="merchDetailModal" aria-hidden="true">
+    <div class="edit_sty">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                &times;
+            </button>
+            <h4 class="modal-title" id="merchDetailModalLabel">
+                产品详情
+            </h4>
+        </div>
+        <div>
+            <div class="detailDiv">
+                <label for="detailName" class="col-sm-2 control-label detailLable" >商品名称:</label>
+                <span id="detailNameContent"></span>
+            </div>
+            <div class="detailDiv">
+                <label for="pic" class="col-sm-2 control-label detailLable">商品图片:</label>
+                <img class="upload-img" id="picimgContent" src="../static/assets/img/59858PICThv_1024.png">
+            </div>
+            <div class="detailDiv" style="float: left">
+                <label for="detailPic" class="col-sm-2 control-label detailLable">详情图片:</label>
+                <div class="deta-picsContent" style="width: 500px;margin-left: 90px;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改的模式窗口-->
+
+
+</body>
+<script>
+    //设置一个div点击事件被触发 onclick="document.getElementById('pic').click();"
+
+    $('#merchTable').bootstrapTable({
+        url: '/merchandise/merchList',  //请求后台的URL（*）
+        method: 'get',   //请求方式（*）
+        cache: false,                       // 设置为 false 禁用 AJAX 数据缓存， 默认为true
+        toolbar: '#merchTool',               //工具按钮用哪个容器
+        striped: true,                     //表格显示条纹，默认为false
+        // toolbar: '#merchTable',               //工具按钮用哪个容器
+        sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+        showRefresh: true,                  //是否显示刷新按钮
+        pagination: true,                   //是否显示分页（*）
+        pageNumber: 1,                      //初始化加载第一页，默认第一页,并记录
+        pageSize: 10,                     //每页的记录行数（*）
+        pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+        showColumns: true,                  //是否显示所有的列（选择显示的列）
+        clickToSelect: true,                //是否启用点击选中行
+        height: 600,
+        uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+        //得到查询的参数
+        queryParams: function (params) {
+            //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+            var temp = {
+                limit: params.limit,                         //页面大小
+                page: (params.offset / params.limit) + 1,   //页码
+                sort: params.sort,      //排序列名
+                sortOrder: params.order, //排位命令（desc，asc）
+                detailName:$("input[name=merchName]").val().trim()
+            };
+            return temp;
+        },
+        columns: [{
+            field: 'Id',
+            checkbox: true,
+            align: 'center',
+            width:'10',
+        }, {
+            field: 'detailName',
+            title: '产品名称',
+            sortable: true,
+            width:'50',
+        }, {
+            field: 'pic',
+            title: '展示图',
+            formatter: function showPic(value, row, index) {
+                var ss = "<img style='width: 70px;height: 70px' src='images/read?path=" + value + "'>";
+                return ss
+            },
+            align: 'center',
+            width:'30',
+        }, {
+            field: 'createDate',
+            title: '创建时间',
+            width:'30',
+        }, {
+            title: '操作',
+            field: 'Id',
+            align: 'center',
+            formatter: function (value, row, index) {
+                var e = '<span id="operat1" data-toggle="modal" onclick="editMerch(\'' + row.id + '\');"><img src="../static/assets/img/it_e.png"></span> ';
+                var d = '<span id="operat2" onclick="delMerch(\'' + row.id + '\',\'del\');"><img src="../static/assets/img/cut.png"></span>';
+                var f = '<span id="operat3" onclick="detailMerch(\'' + row.id + '\');"><img src="../static/assets/img/detail.png"></span>';
+                return e + d+f;
+            },
+            width:'50',
+
+        }],
+    });
+
+    //需要在目录下删除的图片 deleteImg_array
+    var deleteImg_array = new Array();
+    //新增产品
+    function addMerch(fag) {
+        if(fag){
+            $("#merchModalLabel").html("新增产品");
+            $("#merchModal").modal("show");
+            $("#merchSub").attr("onclick", "addMerch()");
+        } else {
+            var detailName = $("input[name=detailName]").val().trim();
+            var pic = $("#picimg").attr('data-img');
+            var detailPic = new Array();
+            var detailimg_array = $(".deta-pics .detailPicImg");
+            for(var j=0;j<detailimg_array.length;j++){
+                var _detailPic =  $(detailimg_array[j]).attr('data-img');
+                if(null != _detailPic){
+                    detailPic.push(_detailPic);
+                }
+            }
+            var detailPic_str = detailPic.join(",");
+            if(null == detailName){
+                alert("产品名称不能为空");
+                return;
+            }
+            if(null == pic){
+                alert("请上传产品主图");
+                return;
+            }
+            $.ajax(
+                {
+                    url: "/merchandise/saveMerchandise",
+                    data: {
+                        detailName:detailName,
+                        pic:pic,
+                        detailPic:detailPic_str,
+                    },
+                    type: "POST",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            deleteImgPaths(deleteImg_array);
+                            $("#merchModal").modal("hide");
+                            $('#merchTable').bootstrapTable('refresh');
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert('请求出错');
+                    },
+
+                });
+        }
+
+    }
+
+    //编辑
+    function editMerch(id) {
+        if (id) {
+            $("#merchModalLabel").html("编辑产品");
+            returnData(id);
+            $("#merchSub").attr("onclick", "editMerch()");
+        } else {
+            var detailName = $("input[name=detailName]").val().trim();
+            var pic = $("#picimg").attr('data-img');
+            //详情图片
+            var detailPic = new Array();
+            var detailimg_array = $(".deta-pics .detailPicImg");
+            for(var j=0;j<detailimg_array.length;j++){
+                var _detailPic =  $(detailimg_array[j]).attr('data-img');
+                if(null != _detailPic){
+                    detailPic.push(_detailPic);
+                }
+            }
+            var detailPic_str = detailPic.join(",");
+            if(null == detailName){
+                alert("产品名称不能为空");
+                return;
+            }
+            if(null == pic){
+                alert("请上传产品主图");
+                return;
+            }
+            $.ajax(
+                {
+                    url: "/merchandise/updateMerchandise",
+                    data: {
+                        id:$("#mid").val(),
+                        detailName:detailName,
+                        pic:pic,
+                        detailPic:detailPic_str,
+                    },
+                    type: "POST",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            deleteImgPaths(deleteImg_array);
+                            $("#merchModal").modal("hide");
+                            $('#merchTable').bootstrapTable('refresh');
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert('请求出错');
+                    },
+
+                });
+        }
+    }
+    //模态框回显数据
+    function returnData(id) {
+        $.ajax({
+            url: "/merchandise/findOne",
+            async: true,
+            type: "GET",
+            data: {
+                "id": id
+            },
+            success: function (data) {
+                $("#mid").val(data.id);
+                $("#detailName").val(data.detailName);
+                $("#picimg").attr("src", "images/read?path="+data.pic);
+                $("#picimg").attr("data-img", data.pic);
+                if(null!=data.detailPic){
+                    var detailPic_array = data.detailPic.split(",");
+                    for(var i=0;i<detailPic_array.length;i++){
+                        if(null!=detailPic_array[i]&&detailPic_array[i]!=""){
+                            $(".deta-pics").append("<span class='img-span'><img class='upload-img detailPicImg' src='images/read?path=" + detailPic_array[i] + "' data-img='" + detailPic_array[i] + "'><div class='delete-div'>" +
+                                "<img src='../static/assets/img/1159854.png' class='delete'/></div></span>");
+                        }
+                    }
+                }
+                $("#merchModal").modal("show");
+            },
+            error: function () {
+                alert("请求失败");
+            },
+            dataType: "json"
+        });
+    };
+    $(document).ready(function () {
+        //图片预览
+        $("#pic").change(function () {
+            var current_pic = this.files[0];
+            var r = new FileReader();
+            r.readAsDataURL(current_pic);
+            r.onload = function (e) {
+                $("#picimg").attr("src", this.result);
+                var picUrl = $("#picimg").attr("data-img");
+                if(null != picUrl){
+                    deleteImg_array.push(picUrl);
+                }
+            }
+            uploadimg(1)
+        })
+        //多图片预览
+        $("#detailPic").change(function () {
+            var current_pics = this.files;
+            for (var i = 0; i < current_pics.length; i++) {
+                var r = new FileReader();
+                r.readAsDataURL(current_pics[i]);
+                r.onload = function (e) {
+                    $(".deta-pics").append("<span class='img-span'><img class='upload-img detailPicImg' src='" + this.result + "'><div class='delete-div'>" +
+                                           "<img src='../static/assets/img/1159854.png' class='delete'/></div></span>");
+                }
+            }
+            uploadimg(2);
+
+        })
+        //显示删除按钮
+        $(document).on("mousemove",".img-span",function () {
+            $(this).find(".delete-div").show();
+        })
+        //移除删除按钮
+        $(document).on("mouseout",".img-span",function () {
+            $(this).find(".delete-div").hide();
+        })
+        //移除图片
+        $(document).on("click",".delete",function () {
+            //删除指定目录下的图片
+            var img = $(this).parents(".delete-div").prev();
+            var dataUrl = $(img).attr('data-img');
+            if(null != dataUrl){
+                deleteImg_array.push(dataUrl);
+
+            }
+            $(this).parents(".img-span").remove();
+            var checkPic = $(".deta-pics").find(".detailPicImg");
+            if(checkPic.length<=0){
+                $(".detailpics .msg-span").hide();
+            }
+        })
+    })
+    //上传图片
+    function uploadimg(fag) {
+
+        var formData = new FormData();
+        if(fag==1){
+            var files = $("#pic").prop("files");
+            var file = files[0];
+            formData.append("files",file);
+        }else{
+
+            var files = $("#detailPic").prop("files");
+            $.each(files,function (index ,file) {
+                formData.append("files",file);
+            })
+        }
+        $.ajax(
+            {
+                url: "/merchandise/upload",
+                traditional: true,
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: formData,
+                type: "POST",
+                success: function (data) {
+                    if(data.code==0){
+                        var imgPath = data.msg;
+                        if(fag==1){
+                            $("#picimg").attr('data-img',imgPath);
+                            $(".pics .msg-span").show();
+                        }else{
+                            //获取最后一个data-img不为空的img index
+                            var checkNull_index;
+                            var detailimgs = $(".deta-pics .detailPicImg");
+                            $.each(detailimgs,function (index,detailImg) {
+                                if($(detailImg).attr('data-img')!=null){
+                                    checkNull_index = index;
+                                }
+                            })
+                            if(checkNull_index>=0){
+                                checkNull_index = checkNull_index+1;
+                            }else{
+                                checkNull_index = 0;
+                            }
+                            if(null!=imgPath){
+                                var imgPath_array = imgPath.split(",");
+                                for(var i=0;i<imgPath_array.length;i++){
+                                    $(".deta-pics .detailPicImg").eq(i+checkNull_index).attr('data-img',imgPath_array[i]);
+                                }
+                                $(".detailpics .msg-span").show();
+                            }
+                        }
+
+                    }else{
+                        alert(data.msg);
+                    }
+                },
+                error: function () {
+                    alert('请求出错');
+                },
+
+            });
+
+    }
+    //模态框关闭时重置
+    $("#merchModal").on("hidden.bs.modal", function () {
+        $("#id").val("");
+        $("#detailName").val("");
+        $("#picimg").attr("src", "../static/assets/img/59858PICThv_1024.png");
+        $(".deta-pics").html("");
+        $(".msg-span").hide();
+        deleteImg_array = new Array();
+    });
+
+    //删除
+    function delMerch(id) {
+        var id_arry = new Array();
+        if (id) {
+            id_arry.push(id);
+        } else {
+            //获取选中行
+            var rows = $('#merchTable').bootstrapTable("getSelections");
+
+            if (rows.length == 0) {
+                alert("请选中要删除的数据行");
+                return;
+            }
+            $.each(rows, function (index, obj) {
+                id_arry.push(obj.id);
+            })
+        }
+        if (confirm("你确定要删除此数据吗？")) {
+            $.ajax(
+                {
+                    url: "/merchandise/deleteMerchandises",
+                    traditional: true,
+                    data: {
+                        ids: id_arry,
+                    },
+                    type: "POST",
+                    success: function (data) {
+                        if (data.code == 0) {
+                            $('#merchTable').bootstrapTable('refresh');
+                        } else {
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert('请求出错');
+                    },
+
+                });
+        }
+
+    }
+    //删除目录下的图片
+    function deleteImgPaths(paths) {
+        $.ajax(
+            {
+                url: "/images/delete",
+                traditional: true,
+                data: {
+                    paths: paths,
+                },
+                type: "POST",
+                success: function (data) {
+                },
+                error: function () {
+                    alert('请求出错');
+                },
+
+            });
+    }
+    //详情
+    function detailMerch(id) {
+        $.ajax({
+            url: "/merchandise/findOne",
+            async: true,
+            type: "GET",
+            data: {
+                "id": id
+            },
+            success: function (data) {
+                $("#detailNameContent").html(data.detailName);
+                $("#picimgContent").attr("src", "images/read?path="+data.pic);
+                $("#picimgContent").attr("data-img", data.pic);
+                if(null!=data.detailPic){
+                    var detailPic_array = data.detailPic.split(",");
+                    for(var i=0;i<detailPic_array.length;i++){
+                        if(null!=detailPic_array[i]&&detailPic_array[i]!=""){
+                            $(".deta-picsContent").append("<span class='img-spanContent'><img class='upload-img' src='images/read?path=" + detailPic_array[i] + "' data-img='" + detailPic_array[i] + "'></span>");
+                        }
+                    }
+                }
+                $("#merchDetailModal").modal("show");
+            },
+            error: function () {
+                alert("请求失败");
+            },
+            dataType: "json"
+        });
+    }
+    //详情模态框关闭时重置
+    $("#merchDetailModal").on("hidden.bs.modal", function () {
+        $("#detailNameContent").html("");
+        $(".deta-picsContent").html("");
+    });
+    //搜索
+    $("#merchSearch").click(function () {
+        $('#merchTable').bootstrapTable('refresh');
+    })
+</script>
+</html>

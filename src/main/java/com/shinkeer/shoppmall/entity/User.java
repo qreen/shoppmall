@@ -1,5 +1,6 @@
 package com.shinkeer.shoppmall.entity;
 
+import com.shinkeer.shoppmall.base.entity.BaseEntity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -7,11 +8,8 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "user")
-public class User implements Serializable{
+public class User extends BaseEntity{
 
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "id", nullable = false, length = 36, updatable = false, insertable = false)
     private String id;
     @Column(nullable = false, columnDefinition = "VARCHAR(255)   COMMENT '联系人'")
