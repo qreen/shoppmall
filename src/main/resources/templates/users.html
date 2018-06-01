@@ -120,26 +120,37 @@
             field: 'Id',
             checkbox: true,
             align: 'center',
+            width:'20'
         }, {
             field: 'userName',
             title: '联系人',
-            sortable: true
+            sortable: true,
+            align:"center",
+            width:'30'
         }, {
             field: 'phone',
             title: '联系电话',
-            sortable: true
+            sortable: true,
+            align:"center",
+            width:'30'
         }, {
             field: 'email',
-            title: '邮箱'
+            title: '邮箱',
+            align:"center",
+            width:'30'
         }, {
             field: 'qq',
             title: 'qq',
+            align:"center",
+            width:'30'
         }, {
             field: 'address',
-            title: '地址'
+            title: '地址',
+            width:'50'
         }, {
             field: 'createDate',
-            title: '创建时间'
+            title: '创建时间',
+            width:'30'
         },{
             title: '操作',
             field: 'Id',
@@ -148,7 +159,8 @@
                 var e = '<span id="operat1" data-toggle="modal" onclick="editUser(\'' + row.id + '\');"><img src="../static/assets/img/it_e.png"></span> ';
                 var d = '<span id="operat2" onclick="delUser(\'' + row.id + '\',\'del\');"><img src="../static/assets/img/cut.png"></span>';
                 return e + d;
-            }
+            },
+            width:'50',
         }],
     });
 

@@ -252,7 +252,6 @@
 <nav class="navbar-default navbar-side" role="navigation">
     <div class="sidebar-collapse">
         <ul class="nav" id="main-menu">
-
             <li>
                 <a href="#" class="active-menu" onclick="addTab('联系人管理','/users','111')">联系人管理</a>
             </li>
@@ -280,8 +279,12 @@
 <!--导航内容-->
 <div id="page-wrapper">
     <div class="header">
-        <ul class="nav nav-tabs" id="mytab">
-        </ul>
+        <div class="scoll-left"><img src="../static/assets/img/left.png"></div>
+        <div class="scoll-right"><img src="../static/assets/img/right.png"></div>
+        <div class="ul-div-style">
+            <ul class="nav" id="mytab" style="position: relative;">
+            </ul>
+        </div>
     </div>
     <div id="page-inner">
         <div class="row tab-content">
@@ -315,6 +318,19 @@
             $("#mytab").append("<li data-tm='" + id + "'><a href='#" + id + "'>" + tabName + "<span class='tabs-close'><img src='../static/assets/img/1162328.png' ></span></a></li>");
         }
         loadDivData(id, url);
+
+        //新增标签页时查看是否超出父元素固定宽度，超出则显示左右键
+        //获取最后一个li在父元素中的left位置
+        var lastLi_left = $('#mytab li:last-child').position().left;
+        //获取最后一个li在父元素中的宽度
+        var lastLi_width = $('#mytab li:last-child').width();
+        if((parseInt(lastLi_left)+parseInt(lastLi_width))>1030){
+            $(".scoll-left").show();
+            $(".scoll-right").show();
+            $(".ul-div-style").css("margin-left","30px");
+            $(".ul-div-style").css("margin-right","30px");
+        }
+        checkLiShow();
     }
 
     function loadDivData(tabsId, url) {
@@ -342,10 +358,74 @@
         } else if (prevPli.length > 0) {
             $(prevPli).find('a').tab('show');
         }
+        //总li的长度小于1030时，全屏显示
+        //获取最后一个li在父元素中的left位置
+        var lastLi_left = $('#mytab li:last-child').position().left;
+        //获取最后一个li在父元素中的宽度
+        var lastLi_width = $('#mytab li:last-child').width();
+        if((parseInt(lastLi_left)+parseInt(lastLi_width))<1030){
+            $(".ul-div-style").scrollLeft(0);
+            $(".scoll-left").hide();
+            $(".scoll-right").hide();
+            $(".ul-div-style").css("margin-left","0px");
+            $(".ul-div-style").css("margin-right","0px");
+        }
     })
     $(window).load(function () {
-        addTab('联系人管理','/users','111')
+        //初始化内容页
+        addTab('联系人管理','/users','111');
+
+        //绑定向左按钮
+        var left = 0;
+        $(".scoll-left").click(function () {
+            if(left<=0){
+                return;
+            }
+            left -= 100;
+            $(".ul-div-style").scrollLeft(left);
+        })
+
+        //绑定向右按钮
+        $(".scoll-right").click(function () {
+            if(left<0){
+                left = 0;
+            }
+            //获取最后一个li在父元素中的left位置
+            var lastLi_left = $('#mytab li:last-child').position().left;
+            //获取最后一个li在父元素中的宽度
+            var lastLi_width = $('#mytab li:last-child').width();
+            //如果已经到了最后一个li的left位置了，就不可以移动了
+            if((parseInt(left)+100)>(parseInt(lastLi_left)-1030)){
+                left = parseInt(lastLi_left)+parseInt(lastLi_width)-1030;
+            }else{
+                left += 100;
+            }
+            $(".ul-div-style").scrollLeft(left);
+        })
     });
+
+    //判断选中的li是否在屏幕显示内
+    function checkLiShow(){
+        var act_left = $(".ul-div-style").scrollLeft();
+        console.log("一开始："+act_left);
+        //被选中的li 偏移量
+        var activeLi_left = $('#mytab li.active').position().left;
+        var activeLi_width = $('#mytab li.active').width();
+        if(parseInt(activeLi_left)+parseInt(activeLi_width)>1030+parseInt(act_left)){
+            console.log("大于的情况：activeLi_left+activeLi_width"+(parseInt(activeLi_left)+parseInt(activeLi_width)));
+            console.log("大于的情况：1030+act_left"+(1030+parseInt(act_left)));
+
+            act_left = parseInt(activeLi_left)+parseInt(activeLi_width)-1030;
+            console.log("大于的情况："+act_left);
+        }else if(parseInt(activeLi_left)<parseInt(act_left)){
+            console.log("小于：activeLi_left"+(parseInt(activeLi_left)));
+            console.log("小于：act_left"+(parseInt(act_left)));
+            act_left = parseInt(activeLi_left);
+            console.log("后面一次的小于：act_left"+act_left);
+        }
+        console.log("最后最后的act_left"+act_left)
+        $(".ul-div-style").scrollLeft(act_left);
+    }
 
 </script>
 

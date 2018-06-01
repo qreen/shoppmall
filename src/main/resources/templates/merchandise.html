@@ -205,7 +205,7 @@
                 }
             }
             var detailPic_str = detailPic.join(",");
-            if(null == detailName){
+            if("" == detailName){
                 alert("产品名称不能为空");
                 return;
             }
@@ -225,7 +225,7 @@
                     success: function (data) {
                         if (data.code == 0) {
                             deleteImgPaths(deleteImg_array);
-                            $("#merchModal").modal("hide");
+                             $("#merchModal").modal("hide");
                             $('#merchTable').bootstrapTable('refresh');
                         } else {
                             alert(data.msg);
@@ -312,7 +312,7 @@
                     for(var i=0;i<detailPic_array.length;i++){
                         if(null!=detailPic_array[i]&&detailPic_array[i]!=""){
                             $(".deta-pics").append("<span class='img-span'><img class='upload-img detailPicImg' src='images/read?path=" + detailPic_array[i] + "' data-img='" + detailPic_array[i] + "'><div class='delete-div'>" +
-                                "<img src='../static/assets/img/1159854.png' class='delete'/></div></span>");
+                                "<img src='../static/assets/img/1159854.png' style='cursor: pointer;' class='delete'/></div></span>");
                         }
                     }
                 }
@@ -327,31 +327,51 @@
     $(document).ready(function () {
         //图片预览
         $("#pic").change(function () {
-            var current_pic = this.files[0];
-            var r = new FileReader();
-            r.readAsDataURL(current_pic);
-            r.onload = function (e) {
-                $("#picimg").attr("src", this.result);
-                var picUrl = $("#picimg").attr("data-img");
-                if(null != picUrl){
-                    deleteImg_array.push(picUrl);
+            $(".pics .msg-span").hide();
+            if(typeof FileReader != 'undefined'){
+                var current_pic = this.files[0];
+                if((current_pic.type).indexOf("image/")==-1){
+                    $(".pics .msg-span").html("请上传图片（格式BMP、JPG、JPEG、PNG、GIF等）!");
+                    $(".pics .msg-span").show();
+                    return;
                 }
+                var r = new FileReader();
+                r.readAsDataURL(current_pic);
+                r.onload = function (e) {
+                    $("#picimg").attr("src", this.result);
+                    var picUrl = $("#picimg").attr("data-img");
+                    if(null != picUrl){
+                        deleteImg_array.push(picUrl);
+                    }
+                }
+                uploadimg(1)
             }
-            uploadimg(1)
+
         })
         //多图片预览
         $("#detailPic").change(function () {
-            var current_pics = this.files;
-            for (var i = 0; i < current_pics.length; i++) {
-                var r = new FileReader();
-                r.readAsDataURL(current_pics[i]);
-                r.onload = function (e) {
-                    $(".deta-pics").append("<span class='img-span'><img class='upload-img detailPicImg' src='" + this.result + "'><div class='delete-div'>" +
-                                           "<img src='../static/assets/img/1159854.png' class='delete'/></div></span>");
-                }
-            }
-            uploadimg(2);
+            $(".detailpics .msg-span").hide();
 
+            if(typeof FileReader != 'undefined') {
+                var current_pics = this.files;
+                for (var j = 0; j < current_pics.length; j++) {
+                    var current_pic = this.files[j];
+                    if ((current_pic.type).indexOf("image/") == -1) {
+                        $(".detailpics .msg-span").html("请上传图片（格式BMP、JPG、JPEG、PNG、GIF等）!");
+                        $(".detailpics .msg-span").show();
+                        return;
+                    }
+                }
+                for (var i = 0; i < current_pics.length; i++) {
+                    var r = new FileReader();
+                    r.readAsDataURL(current_pics[i]);
+                    r.onload = function (e) {
+                        $(".deta-pics").append("<span class='img-span'><img class='upload-img detailPicImg' src='" + this.result + "'><div class='delete-div'>" +
+                            "<img src='../static/assets/img/1159854.png' style='cursor: pointer;' class='delete'/></div></span>");
+                    }
+                }
+                uploadimg(2);
+            }
         })
         //显示删除按钮
         $(document).on("mousemove",".img-span",function () {
@@ -406,6 +426,7 @@
                         var imgPath = data.msg;
                         if(fag==1){
                             $("#picimg").attr('data-img',imgPath);
+                            $(".pics .msg-span").html("上传成功...");
                             $(".pics .msg-span").show();
                         }else{
                             //获取最后一个data-img不为空的img index
@@ -426,6 +447,7 @@
                                 for(var i=0;i<imgPath_array.length;i++){
                                     $(".deta-pics .detailPicImg").eq(i+checkNull_index).attr('data-img',imgPath_array[i]);
                                 }
+                                $(".detailpics .msg-span").html("上传成功...");
                                 $(".detailpics .msg-span").show();
                             }
                         }
@@ -446,6 +468,7 @@
         $("#id").val("");
         $("#detailName").val("");
         $("#picimg").attr("src", "../static/assets/img/59858PICThv_1024.png");
+        $("#picimg").removeAttr("data-img");
         $(".deta-pics").html("");
         $(".msg-span").hide();
         deleteImg_array = new Array();

@@ -161,6 +161,7 @@ public class MerchandiseAction {
     public Result fildUpload(HttpServletRequest request) throws Exception {
         MultipartHttpServletRequest mRequest = (MultipartHttpServletRequest)request;
         List<MultipartFile> mfiles = mRequest.getFiles("files");
+//        String rootPath = "/root/java";
         String rootPath = "c:/root/java";
         String path ="/static/images/";
 //        Merchandise merchandise = merchandiseService.findById(id);
@@ -199,6 +200,7 @@ public class MerchandiseAction {
     @GetMapping("/images/read")
     public void images( String path, HttpServletResponse response) {
         String rootPath = "c:/root/java";
+//        String rootPath = "/root/java";
         File file = new File(rootPath + path);
         try {
             writeOutFile(response, file);
@@ -249,6 +251,7 @@ public class MerchandiseAction {
     @PostMapping("/images/delete")
     public Result deleteFile( String[] paths) {
         String rootPath = "c:/root/java";
+//        String rootPath = "/root/java";
         if(null!=paths && paths.length>0){
             for (int i=0;i<paths.length;i++){
                 File file = new File(rootPath + paths[i]);

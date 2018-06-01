@@ -6,10 +6,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.servlet.MultipartConfigElement;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "com.shinkeer.shoppmall")//扫描所有的类，查看每个类中的注解，spring管理本目录下的所有注解类
@@ -19,7 +23,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EntityScan(basePackages = "com.shinkeer.shoppmall.entity",basePackageClasses = Jsr310JpaConverters.class)//扫描entity类，Jsr310JpaConverters：对日期的转换处理
 
 public class ShoppmallApplication {
-
+	@Bean
+	public MultipartConfigElement multipartConfigElement() {
+		MultipartConfigFactory factory = new MultipartConfigFactory();
+		factory.setMaxFileSize("100MB");
+		factory.setMaxRequestSize("100MB");
+		return factory.createMultipartConfig();
+	}
 	public static void main(String[] args) {
 		SpringApplication.run(ShoppmallApplication.class, args);
 	}

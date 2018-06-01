@@ -80,6 +80,7 @@
     float: left;
 }
 #operat1{
+    cursor:pointer;
     width:30px;
     height: 30px;
     margin-right: 5px;
@@ -87,12 +88,14 @@
 }
 
 #operat2{
+    cursor:pointer;
     width:30px;
     height: 30px;
     margin-left: 5px;
     /*border-style: solid;*/
 }
 #operat3{
+    cursor:pointer;
     width:30px;
     height: 30px;
     margin-left: 10px;
