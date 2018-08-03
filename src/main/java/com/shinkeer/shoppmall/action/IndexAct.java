@@ -27,4 +27,8 @@ public class IndexAct {
     public String text(){
         return "text";
     }
+    @GetMapping("/regist")
+    public String regist(){
+        return "regist";
+    }
 }

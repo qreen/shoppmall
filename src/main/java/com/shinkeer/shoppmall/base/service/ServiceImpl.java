@@ -148,6 +148,7 @@ public class ServiceImpl<BE extends BaseEntity, BD extends BaseDTO> implements S
         }
     }
 
+
     @Override
     public void remove(BE... entities) throws SerException {
         try {

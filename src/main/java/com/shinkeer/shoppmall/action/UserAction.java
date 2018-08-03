@@ -22,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -53,7 +54,12 @@ public class UserAction {
     @RequestMapping(value = "/user/findOne2",method = RequestMethod.GET)
     public User findOne2(UserDTO userDTO) throws ActException {
         try {
-            return userService.findOne(userDTO);
+            User user = new User();
+            List<User> user_list = userService.findAll();
+            if(user_list.size()>0){
+                user = user_list.get(0);
+            }
+            return user;
         }catch (SerException e){
             throw new ActException(e.getMessage());
         }
